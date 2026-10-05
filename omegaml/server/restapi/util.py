@@ -96,11 +96,15 @@ class OmegaResourceMixin:
         for k, v in payload_defaults.items():
             payload.setdefault(k, v)
         # format
+        # -- handle list or dict payload
+        format_payload = (
+            payload if isinstance(payload, dict) else payload[0] if isinstance(payload, list) and payload else {}
+        )
         format = {
-            'raw': raw or payload.get('raw', False),
-            'stream': isTrue(stream or payload.get('stream') or query.get('stream')),
-            'streamer': streamer or query.get('streamer') or payload.get('streamer'),
-            'is_async': isTrue(is_async or query.get('async') or payload.get('async')),
+            'raw': raw or format_payload.get('raw', False),
+            'stream': isTrue(stream or format_payload.get('stream') or query.get('stream')),
+            'streamer': streamer or query.get('streamer') or format_payload.get('streamer'),
+            'is_async': isTrue(is_async or self.is_async or query.get('async') or format_payload.get('async')),
         }
         return query, payload, format
 

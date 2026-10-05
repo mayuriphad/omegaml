@@ -43,6 +43,9 @@ class StreamableResourceMixin:
     SECRET_KEY = os.getenv('SECRET_KEY', 'ec3d75c6f5b3965f24f148969b1c82d57246a8aab46393b55ba18d712fa1a0ad')
     PBKDF_ITER = int(os.getenv('PBKDF_ITER', 500000))
 
+    def __init__(self, *args, streamer=None, **kwargs):
+        self.streamer = streamer or 'inline'  # inline or ssechat
+
     def prepare_streaming_result(self, promise=None, resource_name=None, raw=False, stream=None, streamer=None):
         """prepare result for event streaming
 
@@ -57,7 +60,7 @@ class StreamableResourceMixin:
             str | tuple: a serializable result (str) or a Flask-compatible tuple of (body, status_code, location, cookies)
         """
         stream = stream or promise.id  # type: str
-        streamer = streamer or self.om.defaults.OMEGA_EVENTS_STREAMER
+        streamer = streamer or self.streamer or self.om.defaults.OMEGA_EVENTS_STREAMER
         # functions that handle streaming
         #    name => method(stream)
         STREAMERS = {
