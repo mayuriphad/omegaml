@@ -55,7 +55,8 @@ ai_inf_deps = [
     'openai',
     'markitdown[pdf]',
     'pgvector',
-    'psycopg2-binary',  # required for pgvector
+    'psycopg[binary]',  # recommended pgsql driver for sqlalchemy>=2.1, required for pgvector
+    'psycopg2-binary',  # recommended pgsql driver for sqlalchemy<2.1, required for pgvector
     'gunicorn[gevent]',  # required for async sse event server in scripts/ssechat
 ]
 ai_dev_deps = [
